@@ -11,7 +11,7 @@ public class MainClass {
     public static void main(String[] args) {
         SimpleConcurrentCurrencyService simpleConcurrentCurrencyService = new SimpleConcurrentCurrencyService();
         CurrencyStats stats = simpleConcurrentCurrencyService.getCurrencyStats(new CurrencyStatsRequest("USD",
-                LocalDate.parse("2009-04-13"), LocalDate.now()));
+                LocalDate.parse("2015-04-13"), LocalDate.now()));
         System.out.println(stats);
     }
 }

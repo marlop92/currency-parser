@@ -11,7 +11,6 @@ import javax.xml.stream.events.XMLEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -82,10 +81,26 @@ public class NbpStaxParser implements NbpXmlParser{
     }
 
     private XMLEventReader createXmlReader(String filename, XMLInputFactory xmlInputFactory) {
-        try {
-            return xmlInputFactory.createXMLEventReader(getReader(filename));
-        } catch (XMLStreamException ex) {
-            throw new XmlFIleException(UNEXPECTED_XML_EXCEPTION);
+        synchronized (this) {
+            XMLEventReader reader = null;
+            int retry = 0;
+            while(reader == null) {
+                try {
+                    reader = xmlInputFactory.createXMLEventReader(getReader(filename));
+                } catch (XMLStreamException ex) {
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if(retry == 10) {
+                    throw new RuntimeException("Too much invalid connections");
+                }
+            }
+
+            return reader;
         }
     }
 
