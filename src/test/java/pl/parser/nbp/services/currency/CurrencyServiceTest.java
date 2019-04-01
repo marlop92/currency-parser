@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CurrencyServiceTest {
 
-    CurrencyService currencyService = new XmlCurrencyService();
+    CurrencyService currencyService = new SimpleConcurrentCurrencyService();
     Clock presentDate = Clock.systemDefaultZone();
 
     @ParameterizedTest
