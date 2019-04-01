@@ -7,14 +7,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SingleFileHandler {
+public class SingleTextFileParser implements TextFileParser {
 
-    public List<String> getFilenames(URL source){
+    @Override
+    public List<String> getFilenames(URL source) {
         List<String> filenames = new ArrayList<>();
 
         try {
-        BufferedReader sourceReader = new BufferedReader(new InputStreamReader(source.openStream()));
-        String line;
+            BufferedReader sourceReader = new BufferedReader(new InputStreamReader(source.openStream()));
+            String line;
 
             while ((line = sourceReader.readLine()) != null) {
                 if (line.charAt(0) == 'c') {

@@ -6,7 +6,7 @@ import pl.parser.nbp.model.CurrencyStatsRequest;
 import java.util.List;
 import java.util.Optional;
 
-public interface ExternalFileService {
+public interface FileService {
 
     List<String> getCurrencyFilenames(CurrencyStatsRequest request);
 

@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -81,7 +80,6 @@ public class NbpStaxParser implements NbpXmlParser{
     }
 
     private XMLEventReader createXmlReader(String filename, XMLInputFactory xmlInputFactory) {
-        synchronized (this) {
             XMLEventReader reader = null;
             int retry = 0;
             while(reader == null) {
@@ -101,15 +99,12 @@ public class NbpStaxParser implements NbpXmlParser{
             }
 
             return reader;
-        }
     }
 
     private BufferedReader getReader(String filename) {
         try {
             return new BufferedReader(new InputStreamReader(new URL(filename).openStream()));
-        } catch (MalformedURLException ex) {
-            throw new XmlFIleException(String.format(FILE_UNAVAILABLE, filename));
-        } catch (IOException e) {
+        } catch (IOException ex) {
             throw new XmlFIleException(String.format(FILE_UNAVAILABLE, filename));
         }
     }

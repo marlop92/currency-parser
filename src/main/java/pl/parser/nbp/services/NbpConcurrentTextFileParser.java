@@ -9,24 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExternalFileHandler {
+public class NbpConcurrentTextFileParser implements NbpTextFileParser {
 
     private static final int NBP_FIRST_HANDLED_YEAR = 2002;
     private static final int CURRENT_YEAR = LocalDate.now().getYear();
     private static final String FILE_SOURCE_FORMAT = ".txt";
     private static final String FILE_SOURCE_BASE = "https://www.nbp.pl/kursy/xml/dir";
-    private final SingleFileHandler handler;
 
-    public ExternalFileHandler(SingleFileHandler handler) {
-        this.handler = handler;
+    private final TextFileParser textFileParser;
+
+    public NbpConcurrentTextFileParser() {
+        textFileParser = new SingleTextFileParser();
     }
 
+    public NbpConcurrentTextFileParser(SingleTextFileParser textFileParser) {
+        this.textFileParser = textFileParser;
+    }
+
+    @Override
     public List<String> getFilenames(LocalDate beginDate, LocalDate endDate) throws MalformedURLException {
         validateDates(beginDate, endDate);
 
         List<URL> fileSources = getFileSources(beginDate, endDate);
         List<String> filenames = fileSources.stream().parallel().
-                map(source -> handler.getFilenames(source).stream()).
+                map(source -> textFileParser.getFilenames(source).stream()).
                 flatMap(n -> n).
                 collect(Collectors.toList())
                 .stream()
