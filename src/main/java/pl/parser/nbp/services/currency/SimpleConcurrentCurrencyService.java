@@ -3,6 +3,8 @@ package pl.parser.nbp.services.currency;
 import pl.parser.nbp.model.CurrencyData;
 import pl.parser.nbp.model.CurrencyStats;
 import pl.parser.nbp.model.CurrencyStatsRequest;
+import pl.parser.nbp.services.files.FileService;
+import pl.parser.nbp.services.files.NbpFileService;
 import pl.parser.nbp.services.statistics.SimpleStatisticsService;
 import pl.parser.nbp.services.statistics.StatisticsService;
 

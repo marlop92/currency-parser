@@ -1,4 +1,4 @@
-package pl.parser.nbp.services;
+package pl.parser.nbp.services.parser.text;
 
 import java.net.MalformedURLException;
 import java.time.LocalDate;

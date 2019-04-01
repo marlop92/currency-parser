@@ -1,9 +1,11 @@
-package pl.parser.nbp.services.currency;
+package pl.parser.nbp.services.files;
 
 import pl.parser.nbp.model.CurrencyData;
 import pl.parser.nbp.model.CurrencyStatsRequest;
-import pl.parser.nbp.services.NbpConcurrentTextFileParser;
-import pl.parser.nbp.services.NbpTextFileParser;
+import pl.parser.nbp.services.parser.text.NbpConcurrentTextFileParser;
+import pl.parser.nbp.services.parser.text.NbpTextFileParser;
+import pl.parser.nbp.services.parser.xml.NbpStaxParser;
+import pl.parser.nbp.services.parser.xml.NbpXmlParser;
 
 import java.net.MalformedURLException;
 import java.util.Collections;

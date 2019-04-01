@@ -1,4 +1,4 @@
-package pl.parser.nbp.services;
+package pl.parser.nbp.services.parser.text.single;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -25,4 +25,13 @@ public class CurrencyStatsRequest {
     public LocalDate getStatsEndDate() {
         return statsEndDate;
     }
+
+    @Override
+    public String toString() {
+        return "CurrencyStatsRequest{" +
+                "currencyCode='" + currencyCode + '\'' +
+                ", statsBeginDate=" + statsBeginDate +
+                ", statsEndDate=" + statsEndDate +
+                '}';
+    }
 }

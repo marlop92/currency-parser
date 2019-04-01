@@ -1,6 +1,8 @@
-package pl.parser.nbp.services;
+package pl.parser.nbp.services.parser.text;
 
 import pl.parser.nbp.exceptions.InvalidDateException;
+import pl.parser.nbp.services.parser.text.single.SingleTextFileParser;
+import pl.parser.nbp.services.parser.text.single.TextFileParser;
 
 import java.net.MalformedURLException;
 import java.net.URL;

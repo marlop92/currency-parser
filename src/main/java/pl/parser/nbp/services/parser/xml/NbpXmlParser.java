@@ -1,4 +1,4 @@
-package pl.parser.nbp.services.currency;
+package pl.parser.nbp.services.parser.xml;
 
 import pl.parser.nbp.model.CurrencyData;
 
