@@ -27,11 +27,12 @@ public class NbpStaxParser implements NbpXmlParser{
     private static final String PUBLICATION_DATE = "data_publikacji";
     private static final String FILE_UNAVAILABLE = "Selected file %s is unavailable";
     private static final String UNEXPECTED_XML_EXCEPTION = "Some problems occurred with XML. Processing aborted";
+    private static final String NBP_SITE = "http://www.nbp.pl/kursy/xml/";
 
     @Override
     public Optional<CurrencyData> findCurrencyData(String filename, String expectedCurrencyCode) {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader xmlEventReader = createXmlReader("http://www.nbp.pl/kursy/xml/" + filename, xmlInputFactory);
+        XMLEventReader xmlEventReader = createXmlReader(NBP_SITE + filename, xmlInputFactory);
 
         int divisor = 0;
         boolean searchedCurrencyFound = false;
