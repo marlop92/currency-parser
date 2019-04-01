@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
     private static final String END_DATE_BEFORE_BEGIN_DATE = "End date can't be earlier than begin date";
     private static final String FUTURE_DATES = "Dates from future are illegal";
     private static final String YEAR_NOT_HANDLED = "NBP has no data available for %d year";
+    private static final String XML_FORMAT = ".xml";
 
     private final TextFileParser textFileParser;
 
@@ -37,12 +39,10 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
         validateDates(beginDate, endDate);
 
         List<URL> fileSources = getFileSources(beginDate, endDate);
-        List<String> filenames = fileSources.stream().parallel().
-                map(source -> textFileParser.getFilenames(source).stream()).
-                flatMap(n -> n).
-                collect(Collectors.toList())
-                .stream()
-                .map(n -> n + ".xml")
+        List<String> filenames = fileSources.stream().parallel()
+                .map(textFileParser::getFilenames)
+                .flatMap(Collection::stream)
+                .map(filename -> filename + XML_FORMAT)
                 .collect(Collectors.toList());
 
         return filenames;
