@@ -29,11 +29,7 @@ public class NbpFileService implements FileService {
 
     @Override
     public List<String> getCurrencyFilenames(CurrencyStatsRequest request) {
-        try {
-            return textFileParser.getFilenames(request.getStatsBeginDate(), request.getStatsEndDate());
-        } catch (MalformedURLException e) {
-            return Collections.EMPTY_LIST;
-        }
+        return textFileParser.getFilenames(request.getStatsBeginDate(), request.getStatsEndDate());
     }
 
     @Override

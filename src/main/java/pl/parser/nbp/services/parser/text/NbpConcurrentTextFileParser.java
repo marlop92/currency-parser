@@ -17,6 +17,10 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
     private static final int CURRENT_YEAR = LocalDate.now().getYear();
     private static final String FILE_SOURCE_FORMAT = ".txt";
     private static final String FILE_SOURCE_BASE = "https://www.nbp.pl/kursy/xml/dir";
+    private static final String INVALID_URL = "Application was unable to create %s URL path";
+    private static final String END_DATE_BEFORE_BEGIN_DATE = "End date can't be earlier than begin date";
+    private static final String FUTURE_DATES = "Dates from future are illegal";
+    private static final String YEAR_NOT_HANDLED = "NBP has no data available for %d year";
 
     private final TextFileParser textFileParser;
 
@@ -29,7 +33,7 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
     }
 
     @Override
-    public List<String> getFilenames(LocalDate beginDate, LocalDate endDate) throws MalformedURLException {
+    public List<String> getFilenames(LocalDate beginDate, LocalDate endDate) {
         validateDates(beginDate, endDate);
 
         List<URL> fileSources = getFileSources(beginDate, endDate);
@@ -38,7 +42,7 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
                 flatMap(n -> n).
                 collect(Collectors.toList())
                 .stream()
-                .map(n -> new StringBuilder(n).append(".xml").toString())
+                .map(n -> n + ".xml")
                 .collect(Collectors.toList());
 
         return filenames;
@@ -46,30 +50,38 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
 
     private void validateDates(LocalDate beginDate, LocalDate endDate) {
         if(endDate.isBefore(beginDate)) {
-            throw new InvalidDateException("End date can't be earlier than begin date");
+            throw new InvalidDateException(END_DATE_BEFORE_BEGIN_DATE);
         }
 
         if(beginDate.isAfter(LocalDate.now()) || endDate.isAfter(LocalDate.now())) {
-            throw new InvalidDateException("Dates from future are illegal");
+            throw new InvalidDateException(FUTURE_DATES);
         }
 
         if(beginDate.getYear() < NBP_FIRST_HANDLED_YEAR) {
-            throw new InvalidDateException(String.format("NBP has no data from %d year", beginDate.getYear()));
+            throw new InvalidDateException(String.format(YEAR_NOT_HANDLED, beginDate.getYear()));
         }
     }
 
-    private List<URL> getFileSources(LocalDate startDate, LocalDate endDate) throws MalformedURLException {
+    private List<URL> getFileSources(LocalDate startDate, LocalDate endDate) {
         List<URL> filesSources = new ArrayList<>();
 
         for(int year = startDate.getYear(); year <= endDate.getYear(); year++) {
             if(CURRENT_YEAR == year) {
-                filesSources.add(new URL(FILE_SOURCE_BASE + FILE_SOURCE_FORMAT));
+                filesSources.add(createUrl(FILE_SOURCE_BASE + FILE_SOURCE_FORMAT));
                 break;
             }
 
-            filesSources.add(new URL(FILE_SOURCE_BASE + year + FILE_SOURCE_FORMAT));
+            filesSources.add(createUrl(FILE_SOURCE_BASE + year + FILE_SOURCE_FORMAT));
         }
 
         return filesSources;
+    }
+
+    private URL createUrl(String filename) {
+        try {
+            return new URL(filename);
+        } catch (MalformedURLException ex) {
+            throw new IllegalStateException(String.format(INVALID_URL, filename));
+        }
     }
 }
