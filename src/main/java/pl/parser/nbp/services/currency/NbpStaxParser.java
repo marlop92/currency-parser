@@ -1,6 +1,5 @@
 package pl.parser.nbp.services.currency;
 
-import jdk.nashorn.api.scripting.URLReader;
 import pl.parser.nbp.exceptions.XmlFIleException;
 import pl.parser.nbp.model.CurrencyData;
 
@@ -9,6 +8,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,13 +30,13 @@ public class NbpStaxParser implements NbpXmlParser{
     private static final String FILE_UNAVAILABLE = "Selected file %s is unavailable";
     private static final String UNEXPECTED_XML_EXCEPTION = "Some problems occurred with XML. Processing aborted";
 
-    private int divisor = 0;
-    private boolean searchedCurrencyFound = false;
-
     @Override
     public Optional<CurrencyData> findCurrencyData(String filename, String expectedCurrencyCode) {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader xmlEventReader = createXmlReader(filename, xmlInputFactory);
+        XMLEventReader xmlEventReader = createXmlReader("http://www.nbp.pl/kursy/xml/" + filename, xmlInputFactory);
+
+        int divisor = 0;
+        boolean searchedCurrencyFound = false;
 
         CurrencyData currencyData = new CurrencyData();
         currencyData.setCurrency(expectedCurrencyCode);
@@ -86,10 +89,12 @@ public class NbpStaxParser implements NbpXmlParser{
         }
     }
 
-    private URLReader getReader(String filename) {
+    private BufferedReader getReader(String filename) {
         try {
-            return new URLReader(new URL(filename));
+            return new BufferedReader(new InputStreamReader(new URL(filename).openStream()));
         } catch (MalformedURLException ex) {
+            throw new XmlFIleException(String.format(FILE_UNAVAILABLE, filename));
+        } catch (IOException e) {
             throw new XmlFIleException(String.format(FILE_UNAVAILABLE, filename));
         }
     }

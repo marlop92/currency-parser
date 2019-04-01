@@ -4,6 +4,7 @@ import pl.parser.nbp.model.CurrencyData;
 import pl.parser.nbp.model.CurrencyKey;
 import pl.parser.nbp.model.CurrencyStats;
 import pl.parser.nbp.model.CurrencyStatsRequest;
+import pl.parser.nbp.services.statistics.SimpleStatisticsService;
 import pl.parser.nbp.services.statistics.StatisticsService;
 
 import java.math.BigDecimal;
@@ -16,8 +17,8 @@ import java.util.stream.Stream;
 
 public class SimpleConcurrentCurrencyService implements CurrencyService {
 
-    private ExternalFileService externalFileService;
-    private StatisticsService statisticsService;
+    private ExternalFileService externalFileService = new NbpFileService();
+    private StatisticsService statisticsService = new SimpleStatisticsService();
 
     @Override
     public CurrencyStats getCurrencyStats(CurrencyStatsRequest request) {
