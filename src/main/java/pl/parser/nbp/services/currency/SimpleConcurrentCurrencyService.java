@@ -9,8 +9,10 @@ import pl.parser.nbp.services.statistics.StatisticsService;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SimpleConcurrentCurrencyService implements CurrencyService {
 
@@ -20,7 +22,7 @@ public class SimpleConcurrentCurrencyService implements CurrencyService {
     @Override
     public CurrencyStats getCurrencyStats(CurrencyStatsRequest request) {
         List<String> currencyFilenames = externalFileService.getCurrencyFilenames(request);
-        List<CurrencyData> currencyData = getCurrencyData(currencyFilenames);
+        List<CurrencyData> currencyData = getCurrencyData(currencyFilenames, request.getCurrencyCode());
 
         List<BigDecimal> purchasePrices = getPurchasePrices(currencyData);
         List<BigDecimal> salesPrices = getSalesPrices(currencyData);
@@ -32,9 +34,10 @@ public class SimpleConcurrentCurrencyService implements CurrencyService {
                 request.getStatsEndDate());
     }
 
-    private List<CurrencyData> getCurrencyData(List<String> currencyFilenames) {
+    private List<CurrencyData> getCurrencyData(List<String> currencyFilenames, String currencyCode) {
         return currencyFilenames.stream().parallel().
-                map(filename -> externalFileService.getCurrencyData(filename)).
+                map(filename -> externalFileService.getCurrencyData(filename, currencyCode)).
+                flatMap(Optional::stream).
                 collect(Collectors.toList());
     }
 

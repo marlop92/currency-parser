@@ -1,6 +1,8 @@
 package pl.parser.nbp.services.currency;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import pl.parser.nbp.exceptions.CurrencyRequestValidationException;
@@ -13,11 +15,19 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
+@TestInstance(PER_CLASS)
 class CurrencyServiceTest {
 
-    CurrencyService currencyService = new SimpleConcurrentCurrencyService();
-    Clock presentDate = Clock.systemDefaultZone();
+    CurrencyService currencyService;
+    Clock presentDate;
+
+    @BeforeAll
+    public void setOff() {
+        currencyService = new SimpleConcurrentCurrencyService();
+        presentDate = Clock.systemDefaultZone();
+    }
 
     @ParameterizedTest
     @CsvSource({"USD, 2, 1",

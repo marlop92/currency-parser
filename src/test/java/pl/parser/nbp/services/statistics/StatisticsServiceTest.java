@@ -1,6 +1,8 @@
 package pl.parser.nbp.services.statistics;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -11,10 +13,17 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
+@TestInstance(PER_CLASS)
 class StatisticsServiceTest {
 
-    StatisticsService statisticsService = new SimpleStatisticsService();
+    StatisticsService statisticsService;
+
+    @BeforeAll
+    public void setOff() {
+        statisticsService = new SimpleStatisticsService();
+    }
 
     @ParameterizedTest
     @CsvSource({

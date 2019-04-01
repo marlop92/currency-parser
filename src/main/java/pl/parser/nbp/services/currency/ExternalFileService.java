@@ -4,10 +4,11 @@ import pl.parser.nbp.model.CurrencyData;
 import pl.parser.nbp.model.CurrencyStatsRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ExternalFileService {
 
     List<String> getCurrencyFilenames(CurrencyStatsRequest request);
 
-    CurrencyData getCurrencyData(String currencyFilename);
+    Optional<CurrencyData> getCurrencyData(String currencyFilename, String currencyCode);
 }
