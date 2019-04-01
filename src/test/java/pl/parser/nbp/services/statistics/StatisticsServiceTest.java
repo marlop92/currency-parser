@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,9 @@ class StatisticsServiceTest {
     @ParameterizedTest
     @CsvSource({
             "5, 5, 5, 5, 0",
-            "2, 4, 2, 4, 1"
+            "2, 4, 2, 4, 1",
+            "12, 2, 5, 1, 4.3011",
+            "15, 9, 17, 2, 5.8470"
     })
     public void notEmptyListShouldCalculateStandardDeviation(String num1, String num2, String num3, String num4, String expectedVal) {
         //given
@@ -47,7 +50,7 @@ class StatisticsServiceTest {
         BigDecimal result = statisticsService.calculateStandardDeviation(numbers);
 
         //than
-        assertEquals(expected.setScale(4), result.setScale(4));
+        assertEquals(expected.setScale(4), result.setScale(4, RoundingMode.FLOOR));
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class SimpleStatisticsService implements StatisticsService {
 
-    private static final int ACCURACY = 2;
+    private static final int ACCURACY = 4;
     private static final int SQUARE = 2;
 
     @Override
@@ -38,7 +38,6 @@ public class SimpleStatisticsService implements StatisticsService {
         BigDecimal numbersCount = new BigDecimal(numbers.size());
         BigDecimal average = calculateAverage(numbers);
         BigDecimal varianceTmp = numbers.stream().
-                filter(Objects::nonNull).
                 map(val -> val.subtract(average)).
                 map(val -> val.pow(SQUARE)).
                 reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -49,7 +48,6 @@ public class SimpleStatisticsService implements StatisticsService {
 
     private BigDecimal calculateSum(List<BigDecimal> numbers) {
         return numbers.stream().
-                filter(Objects::nonNull).
                 reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
