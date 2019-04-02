@@ -8,6 +8,7 @@ import java.util.List;
 public class SimpleStatisticsService implements StatisticsService {
 
     private static final int ACCURACY = 4;
+    private static final int MEDIAN_ACCURACY = 12;
     private static final int SQUARE = 2;
 
     @Override
@@ -19,7 +20,7 @@ public class SimpleStatisticsService implements StatisticsService {
         BigDecimal numbersCount = new BigDecimal(numbers.size());
         BigDecimal sum = calculateSum(numbers);
 
-        return sum.divide(numbersCount, ACCURACY, RoundingMode.FLOOR);
+        return sum.divide(numbersCount, ACCURACY, RoundingMode.HALF_EVEN);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class SimpleStatisticsService implements StatisticsService {
                 map(val -> val.pow(SQUARE)).
                 reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return varianceTmp.divide(numbersCount);
+        return varianceTmp.divide(numbersCount, MEDIAN_ACCURACY, RoundingMode.HALF_EVEN);
     }
 
 

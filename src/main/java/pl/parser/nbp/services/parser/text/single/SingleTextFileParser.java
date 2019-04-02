@@ -3,6 +3,7 @@ package pl.parser.nbp.services.parser.text.single;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,14 @@ public class SingleTextFileParser implements TextFileParser {
     private static final char PURCHASE_SALES_CURRENCY_FILE_SIGN = 'c';
     private static final char FIRST_EMPTY_CHAR = '\uFEFF';
     private static final String UNEXPECTED_PROBLEM = "Unexpected error occurred. Check your network connection";
+    private static final String INVALID_URL = "Application was unable to create %s URL path";
 
     @Override
-    public List<String> getFilenames(URL source, int minDateFilePattern, int maxDateFilePattern) {
+    public List<String> getFilenames(String filename, int minDateFilePattern, int maxDateFilePattern) {
         List<String> filenames = new ArrayList<>();
+        URL sourceUrl = createUrl(filename);
 
-        try (BufferedReader sourceReader = new BufferedReader(new InputStreamReader(source.openStream()))) {
+        try (BufferedReader sourceReader = new BufferedReader(new InputStreamReader(sourceUrl.openStream()))) {
             String line;
 
             while ((line = sourceReader.readLine()) != null) {
@@ -45,5 +48,13 @@ public class SingleTextFileParser implements TextFileParser {
         int dateFilePattern = Integer.valueOf(line.substring(DATE_PATTERN_FIRST_LETTER));
         return line.charAt(0) == PURCHASE_SALES_CURRENCY_FILE_SIGN && dateFilePattern >= minDateFilePattern
                 && dateFilePattern <= maxDateFilePattern;
+    }
+
+    private URL createUrl(String filename) {
+        try {
+            return new URL(filename);
+        } catch (MalformedURLException ex) {
+            throw new IllegalStateException(String.format(INVALID_URL, filename));
+        }
     }
 }

@@ -30,7 +30,7 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
         textFileParser = new SingleTextFileParser();
     }
 
-    public NbpConcurrentTextFileParser(SingleTextFileParser textFileParser) {
+    public NbpConcurrentTextFileParser(TextFileParser textFileParser) {
         this.textFileParser = textFileParser;
     }
 
@@ -40,7 +40,7 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
         int minDateFilePattern = calculateFilePattern(beginDate);
         int maxDateFilePattern = calculateFilePattern(endDate);
 
-        List<URL> fileSources = getFileSources(beginDate, endDate);
+        List<String> fileSources = getFileSources(beginDate, endDate);
         List<String> filenames = fileSources.stream().parallel()
                 .map(url -> textFileParser.getFilenames(url, minDateFilePattern, maxDateFilePattern))
                 .flatMap(Collection::stream)
@@ -68,16 +68,16 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
         }
     }
 
-    private List<URL> getFileSources(LocalDate startDate, LocalDate endDate) {
-        List<URL> filesSources = new ArrayList<>();
+    private List<String> getFileSources(LocalDate startDate, LocalDate endDate) {
+        List<String> filesSources = new ArrayList<>();
 
         for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
             if (CURRENT_YEAR == year) {
-                filesSources.add(createUrl(FILE_SOURCE_BASE + FILE_SOURCE_FORMAT));
+                filesSources.add(FILE_SOURCE_BASE + FILE_SOURCE_FORMAT);
                 break;
             }
 
-            filesSources.add(createUrl(FILE_SOURCE_BASE + year + FILE_SOURCE_FORMAT));
+            filesSources.add(FILE_SOURCE_BASE + year + FILE_SOURCE_FORMAT);
         }
 
         return filesSources;
