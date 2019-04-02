@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 
 public class SimpleConcurrentCurrencyService implements CurrencyService {
 
-    public static final String FUTURE_DATE = "Any of date passed to the request can't be from future";
-    public static final String END_DATE_BEFORE_BEGIN_DATE = "End date can't be earlier than begin date";
-    public static final int CURRENCY_CODE_LENGTH = 3;
-    public static final String INVALID_CURRENCY_CODE = "%s isn't valid currency code";
-    public static final String INVALID_DATE = "null isn't valid date";
+    private static final String FUTURE_DATE = "Any of date passed to the request can't be from future";
+    private static final String END_DATE_BEFORE_BEGIN_DATE = "End date can't be earlier than begin date";
+    private static final int CURRENCY_CODE_LENGTH = 3;
+    private static final String INVALID_CURRENCY_CODE = "%s isn't valid currency code";
+    private static final String INVALID_DATE = "null isn't valid date";
     private FileService fileService;
     private StatisticsService statisticsService;
 
