@@ -12,6 +12,7 @@ public class MainClass {
         CurrencyStatsRequest request = InputParser.parseInput(args);
         CurrencyService currencyService = new SimpleConcurrentCurrencyService();
         CurrencyStats stats = currencyService.getCurrencyStats(request);
-        System.out.println(stats);
+        System.out.println(stats.getAvgPurchasePrice());
+        System.out.println(stats.getSalesStandardDeviation());
     }
 }
