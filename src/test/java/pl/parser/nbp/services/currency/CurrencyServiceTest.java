@@ -41,16 +41,17 @@ class CurrencyServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"USD, 2, 1",
-                "CHF, 0, 0",
-                "EUR, 1, 1",
-                "GBP, 30, 0"})
-    public void validDatesAndCodeShouldReturnCorrectStats(String currencyCode, int beginDateMinusDays, int endDateMinusDays) {
+    @CsvSource({"USD, 2, 1, USD",
+                "CHF, 0, 0, CHF",
+                "EUR, 1, 1, EUR",
+                "GBP, 30, 0, GBP"})
+    public void validDatesAndCodeShouldReturnCorrectStats(String currencyCode, int beginDateMinusDays, int endDateMinusDays,
+                                                          String expectedCurrencyCode) {
         //given
         CurrencyStatsRequest request = new CurrencyStatsRequest(currencyCode, LocalDate.now(presentDate).minusDays(beginDateMinusDays),
                 LocalDate.now(presentDate).minusDays(endDateMinusDays));
 
-        CurrencyStats expected = new CurrencyStats(currencyCode, new BigDecimal("3.9000"), new BigDecimal("0.1000"),
+        CurrencyStats expected = new CurrencyStats(expectedCurrencyCode, new BigDecimal("3.9000"), new BigDecimal("0.1000"),
                 LocalDate.now(presentDate).minusDays(beginDateMinusDays), LocalDate.now(presentDate).minusDays(endDateMinusDays));
 
         when(fileService.getCurrencyFilenames(new CurrencyStatsRequest(currencyCode, LocalDate.now(presentDate).minusDays(beginDateMinusDays),
@@ -78,7 +79,7 @@ class CurrencyServiceTest {
     }
 
     @Test
-    public void beforeDateFromFutureShouldThrowException() {
+    public void beginDateFromFutureShouldThrowException() {
         //given
         CurrencyStatsRequest request =
                 new CurrencyStatsRequest("USD", LocalDate.now(presentDate).plusDays(1),
