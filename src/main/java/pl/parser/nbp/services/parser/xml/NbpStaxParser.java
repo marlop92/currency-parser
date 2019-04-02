@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -33,8 +34,17 @@ public class NbpStaxParser implements NbpXmlParser {
     private static final String TOO_MUCH_ATTEMPTS = "Too much unsuccessful connection attempts to nbp xml file. To solve " +
             "that please increase attempt time interval - description in the README";
 
+    private FileReader fileReader;
+
+    public NbpStaxParser() {
+    }
+
+    public NbpStaxParser(FileReader fileReader) {
+        this.fileReader = fileReader;
+    }
+
     @Override
-    public Optional<CurrencyData> findCurrencyData(String filename, String expectedCurrencyCode) {
+    public Optional<CurrencyData> findCurrencyData(String filename, String currencyCode) {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader xmlEventReader = attemptToCreate(NBP_SITE + filename, xmlInputFactory);
 
@@ -42,7 +52,7 @@ public class NbpStaxParser implements NbpXmlParser {
         boolean searchedCurrencyFound = false;
 
         CurrencyData currencyData = new CurrencyData();
-        currencyData.setCurrency(expectedCurrencyCode);
+        currencyData.setCurrency(currencyCode);
 
         while (xmlEventReader.hasNext()) {
             XMLEvent xmlEvent = getXmlEvent(xmlEventReader);
@@ -61,7 +71,7 @@ public class NbpStaxParser implements NbpXmlParser {
             }
 
             if (isTagName(currentEl, CURRENCY_CODE)) {
-                searchedCurrencyFound = isSearchedCurrency(expectedCurrencyCode, xmlEventReader);
+                searchedCurrencyFound = isSearchedCurrency(currencyCode, xmlEventReader);
                 continue;
             }
 
@@ -105,6 +115,10 @@ public class NbpStaxParser implements NbpXmlParser {
     }
 
     private BufferedReader getReader(String filename) {
+        if(fileReader != null) {
+            return new BufferedReader(fileReader);
+        }
+
         try {
             return new BufferedReader(new InputStreamReader(new URL(filename).openStream()));
         } catch (IOException ex) {
