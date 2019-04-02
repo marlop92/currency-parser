@@ -16,6 +16,13 @@ public class CurrencyData {
 
     }
 
+    public CurrencyData(String currency, LocalDate publicationDate, BigDecimal purchasePrice, BigDecimal salesPrice) {
+        this.currency = currency;
+        this.publicationDate = publicationDate;
+        this.purchasePrice = purchasePrice;
+        this.salesPrice = salesPrice;
+    }
+
     public String getCurrency() {
         return currency;
     }
