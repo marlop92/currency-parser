@@ -1,5 +1,6 @@
 package pl.parser.nbp.services.parser.xml;
 
+import pl.parser.nbp.exceptions.NbpConnectionException;
 import pl.parser.nbp.exceptions.XmlFIleException;
 import pl.parser.nbp.model.CurrencyData;
 
@@ -16,7 +17,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 
-public class NbpStaxParser implements NbpXmlParser{
+public class NbpStaxParser implements NbpXmlParser {
 
     private static final String DIVISOR = "przelicznik";
     private static final String CURRENCY_CODE = "kod_waluty";
@@ -28,11 +29,14 @@ public class NbpStaxParser implements NbpXmlParser{
     private static final String FILE_UNAVAILABLE = "Selected file %s is unavailable";
     private static final String UNEXPECTED_XML_EXCEPTION = "Some problems occurred with XML. Processing aborted";
     private static final String NBP_SITE = "http://www.nbp.pl/kursy/xml/";
+    public static final int MAX_ATTEMPTS = 10;
+    public static final int ATTEMPT_TIME_INTERVAL = 500;
+    public static final String TOO_MUCH_ATTEMPTS = "Too much unsuccessful connection attempts";
 
     @Override
     public Optional<CurrencyData> findCurrencyData(String filename, String expectedCurrencyCode) {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader xmlEventReader = createXmlReader(NBP_SITE + filename, xmlInputFactory);
+        XMLEventReader xmlEventReader = attemptToCreate(NBP_SITE + filename, xmlInputFactory);
 
         int divisor = 0;
         boolean searchedCurrencyFound = false;
@@ -80,26 +84,24 @@ public class NbpStaxParser implements NbpXmlParser{
         return Optional.empty();
     }
 
-    private XMLEventReader createXmlReader(String filename, XMLInputFactory xmlInputFactory) {
-            XMLEventReader reader = null;
-            int retry = 0;
-            while(reader == null) {
-                try {
-                    reader = xmlInputFactory.createXMLEventReader(getReader(filename));
-                } catch (XMLStreamException ex) {
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                if(retry == 10) {
-                    throw new RuntimeException("Too much invalid connections");
-                }
+    private XMLEventReader attemptToCreate(String filename, XMLInputFactory xmlInputFactory) {
+        XMLEventReader reader = null;
+        int retry = 0;
+        while (reader == null) {
+            if (retry == MAX_ATTEMPTS) {
+                throw new NbpConnectionException(TOO_MUCH_ATTEMPTS);
             }
 
-            return reader;
+            try {
+                reader = xmlInputFactory.createXMLEventReader(getReader(filename));
+                Thread.sleep(ATTEMPT_TIME_INTERVAL);
+            } catch (XMLStreamException | InterruptedException ignored) {
+            }
+
+            ++retry;
+        }
+
+        return reader;
     }
 
     private BufferedReader getReader(String filename) {
@@ -130,7 +132,7 @@ public class NbpStaxParser implements NbpXmlParser{
         return getXmlEvent(xmlEventReader).asCharacters().getData();
     }
 
-    private XMLEvent getXmlEvent(XMLEventReader xmlEventReader){
+    private XMLEvent getXmlEvent(XMLEventReader xmlEventReader) {
         try {
             return xmlEventReader.nextEvent();
         } catch (XMLStreamException ex) {
