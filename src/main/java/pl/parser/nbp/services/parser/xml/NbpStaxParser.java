@@ -29,9 +29,9 @@ public class NbpStaxParser implements NbpXmlParser {
     private static final String FILE_UNAVAILABLE = "Selected file %s is unavailable";
     private static final String UNEXPECTED_XML_EXCEPTION = "Some problems occurred with XML. Processing aborted";
     private static final String NBP_SITE = "http://www.nbp.pl/kursy/xml/";
-    public static final int MAX_ATTEMPTS = 10;
-    public static final int ATTEMPT_TIME_INTERVAL = 500;
-    public static final String TOO_MUCH_ATTEMPTS = "Too much unsuccessful connection attempts";
+    private static final int MAX_ATTEMPTS = 10;
+    private static final int ATTEMPT_TIME_INTERVAL = 500;
+    private static final String TOO_MUCH_ATTEMPTS = "Too much unsuccessful connection attempts";
 
     @Override
     public Optional<CurrencyData> findCurrencyData(String filename, String expectedCurrencyCode) {
