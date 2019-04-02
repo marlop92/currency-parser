@@ -13,7 +13,7 @@ public class InputParser {
     private static final String INVALID_ARGUMENT_NUMBER = "Invalid number of arguments. Example input: USD 2019-01-01 2019-01-06";
 
     public static CurrencyStatsRequest parseInput(String[] args) {
-        if(args.length < 3) {
+        if(args.length < 3 || args.length > 5) {
             throw new InvalidInputException(INVALID_ARGUMENT_NUMBER);
         }
         String currencyCode = args[0];
@@ -23,6 +23,14 @@ public class InputParser {
         }
         LocalDate beginDate = LocalDate.parse(args[1]);
         LocalDate endDate = LocalDate.parse(args[2]);
+
+        if(args.length >= 4) {
+            GlobalConfig.retryAttemptInterval = Integer.valueOf(args[3]);
+        }
+
+        if(args.length >= 5) {
+            GlobalConfig.retryMaxAttempts = Integer.valueOf(args[4]);
+        }
 
         return new CurrencyStatsRequest(currencyCode, beginDate, endDate);
     }

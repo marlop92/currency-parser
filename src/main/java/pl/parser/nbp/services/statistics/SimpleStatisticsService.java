@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class SimpleStatisticsService implements StatisticsService {
 
@@ -31,7 +29,7 @@ public class SimpleStatisticsService implements StatisticsService {
         }
 
         BigDecimal variance = calculateVariance(numbers);
-        return variance.sqrt(MathContext.DECIMAL32);
+        return variance.sqrt(MathContext.DECIMAL32).setScale(ACCURACY, RoundingMode.HALF_EVEN);
     }
 
     private BigDecimal calculateVariance(List<BigDecimal> numbers) {
@@ -42,7 +40,7 @@ public class SimpleStatisticsService implements StatisticsService {
                 map(val -> val.pow(SQUARE)).
                 reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return varianceTmp.divide(numbersCount, ACCURACY, RoundingMode.FLOOR);
+        return varianceTmp.divide(numbersCount);
     }
 
 

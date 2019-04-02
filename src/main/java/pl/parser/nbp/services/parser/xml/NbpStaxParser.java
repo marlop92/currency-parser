@@ -3,6 +3,7 @@ package pl.parser.nbp.services.parser.xml;
 import pl.parser.nbp.exceptions.NbpConnectionException;
 import pl.parser.nbp.exceptions.XmlFIleException;
 import pl.parser.nbp.model.CurrencyData;
+import pl.parser.nbp.util.GlobalConfig;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -88,13 +89,13 @@ public class NbpStaxParser implements NbpXmlParser {
         XMLEventReader reader = null;
         int retry = 0;
         while (reader == null) {
-            if (retry == MAX_ATTEMPTS) {
+            if (retry == GlobalConfig.retryMaxAttempts) {
                 throw new NbpConnectionException(TOO_MUCH_ATTEMPTS);
             }
 
             try {
                 reader = xmlInputFactory.createXMLEventReader(getReader(filename));
-                Thread.sleep(ATTEMPT_TIME_INTERVAL);
+                Thread.sleep(GlobalConfig.retryAttemptInterval);
             } catch (XMLStreamException | InterruptedException ignored) {
             }
 
