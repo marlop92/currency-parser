@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface TextFileParser {
 
-    List<String> getFilenames(URL source);
+    List<String> getFilenames(URL source, int minDateFilePattern, int maxDateFilePattern);
 }

@@ -37,10 +37,12 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
     @Override
     public List<String> getFilenames(LocalDate beginDate, LocalDate endDate) {
         validateDates(beginDate, endDate);
+        int minDateFilePattern = calculateFilePattern(beginDate);
+        int maxDateFilePattern = calculateFilePattern(endDate);
 
         List<URL> fileSources = getFileSources(beginDate, endDate);
         List<String> filenames = fileSources.stream().parallel()
-                .map(textFileParser::getFilenames)
+                .map(url -> textFileParser.getFilenames(url, minDateFilePattern, maxDateFilePattern))
                 .flatMap(Collection::stream)
                 .map(filename -> filename + XML_FORMAT)
                 .collect(Collectors.toList());
@@ -48,16 +50,20 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
         return filenames;
     }
 
+    private int calculateFilePattern(LocalDate beginDate) {
+        return (beginDate.getYear() % 100) * 10000 + beginDate.getMonth().getValue() * 100 + beginDate.getDayOfMonth();
+    }
+
     private void validateDates(LocalDate beginDate, LocalDate endDate) {
-        if(endDate.isBefore(beginDate)) {
+        if (endDate.isBefore(beginDate)) {
             throw new InvalidDateException(END_DATE_BEFORE_BEGIN_DATE);
         }
 
-        if(beginDate.isAfter(LocalDate.now()) || endDate.isAfter(LocalDate.now())) {
+        if (beginDate.isAfter(LocalDate.now()) || endDate.isAfter(LocalDate.now())) {
             throw new InvalidDateException(FUTURE_DATES);
         }
 
-        if(beginDate.getYear() < NBP_FIRST_HANDLED_YEAR) {
+        if (beginDate.getYear() < NBP_FIRST_HANDLED_YEAR) {
             throw new InvalidDateException(String.format(YEAR_NOT_HANDLED, beginDate.getYear()));
         }
     }
@@ -65,8 +71,8 @@ public class NbpConcurrentTextFileParser implements NbpTextFileParser {
     private List<URL> getFileSources(LocalDate startDate, LocalDate endDate) {
         List<URL> filesSources = new ArrayList<>();
 
-        for(int year = startDate.getYear(); year <= endDate.getYear(); year++) {
-            if(CURRENT_YEAR == year) {
+        for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
+            if (CURRENT_YEAR == year) {
                 filesSources.add(createUrl(FILE_SOURCE_BASE + FILE_SOURCE_FORMAT));
                 break;
             }
