@@ -1,13 +1,17 @@
 package pl.parser.nbp;
 
+import pl.parser.nbp.model.CurrencyStats;
+import pl.parser.nbp.model.CurrencyStatsRequest;
+import pl.parser.nbp.services.currency.CurrencyService;
+import pl.parser.nbp.services.currency.SimpleConcurrentCurrencyService;
+import pl.parser.nbp.util.InputParser;
+
 public class MainClass {
 
     public static void main(String[] args) {
-
-        //get and displays current NBP currencies for selling and buying
-        //input: USD, EUR, CHF, GBP, Date from , Date to - (publication date)
-        //output: average buy rate, sales standard deviation
-        //input data passed via args
-        //displayed on standard output
+        CurrencyStatsRequest request = InputParser.parseInput(args);
+        CurrencyService currencyService = new SimpleConcurrentCurrencyService();
+        CurrencyStats stats = currencyService.getCurrencyStats(request);
+        System.out.println(stats);
     }
 }
